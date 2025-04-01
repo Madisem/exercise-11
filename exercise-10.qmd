@@ -1,0 +1,76 @@
+---
+title: "exercise-10"
+author: "Madina"
+format: html
+editor: visual
+---
+
+Using the {tidyverse} `read_csv()` function, load the “AVONETdataset1.csv” dataset from [this URL](https://github.com/difiore/ada-datasets/blob/main/AVONETdataset1.csv) as a “tibble” named **d**. As discussed in class, this is a recently published dataset that compiles morphological measurements and information on various ecological variables and geographic range data for more than 11,000 species of birds.
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(skimr)
+library(dplyr)
+f<-"AVONETdataset1.csv"
+d<-read_csv(f, col_names = TRUE)
+
+d <- d |>
+  select(Species1, Family1, Order1, Beak.Length_Culmen, Beak.Width,Beak.Depth, Tarsus.Length, Wing.Length, Tail.Length, Mass,Habitat, Migration, Trophic.Level, Trophic.Niche,Min.Latitude, Max.Latitude, Centroid.Latitude, Primary.Lifestyle, Range.Size)
+
+skim(d)
+```
+
+## **Challenge 1**
+
+### **One-Factor ANOVA and Inference**
+
+### **Step 1**
+
+-   Make boxplots of log(**Mass**) in relation to **Trophic.Level** and **Migration** behavior type. For each plot, drop from the visualization all species records where the categorical variable of interest is missing from the dataset. Also, you will want to convert the variable **Migration** (which is scored as a number: “1”, “2”, or “3”) from class numeric to either being classified as a factor or as a character (string) variable.
+
+```{r}
+ggplot(data = d |> drop_na(Trophic.Level),aes(x= Trophic.Level, y = log(Mass))) + 
+  geom_boxplot() + 
+  geom_jitter() 
+ 
+d<- d |> mutate(Migration = as.factor(Migration))
+
+ggplot(data = d |> drop_na(Migration),aes(x= Migration, y = log(Mass))) + 
+  geom_boxplot() + 
+  geom_jitter() 
+```
+
+**Step 2**
+
+-   Run linear models using the `lm()` function to look at the relationship between log(**Mass**) and **Trophic.Level** and between log(**Mass**) and **Migration**.
+
+    ```{r}
+    m1<-lm(log(Mass) ~ Trophic.Level, data = d)
+    summary(m1)
+    m2<-lm(log(Mass) ~ Migration, data = d)
+    summary(m2)
+    ```
+
+-   Examine the output of the resultant linear models. Is log(**Mass**) associated with either **Trophic.Level** or **Migration**category? That is, in the global test of significance, is the F statistic large enough to reject the null hypothesis of an F value of zero?
+
+    --- F statistics is 78.42 is large enough; with p-value being significantly small -\> showing that we reject the null hypotheses about that there is no relation between body mass and Trophic.Level
+
+    ```{r}
+    qf(0.95, df1 = 3, df2 = 11000)
+
+    ```
+
+    ---
+
+    ```         
+    F-statistic: 144.5 on 2 and 10983 DF,  p-value: < 2.2e-16
+    ```
+
+    ```{r}
+    qf(0.95, df1 = 2, df2 = 10983)
+    ```
+
+    -   the F statistic OF regression model of Migration with log(Mass) large enough to reject the null hypothesis!!!
+
+-   Given the regression coefficients returned for your **Migration** model, which **Migration** categor(ies) are different than the reference level? What level is the reference level? Relevel and assess differences among the remaining pair of **Migration** categories.
