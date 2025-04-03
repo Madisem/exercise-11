@@ -54,16 +54,9 @@ ggplot(data = d |> drop_na(Migration),aes(x= Migration, y = log(Mass))) +
 
 -   Examine the output of the resultant linear models. Is log(**Mass**) associated with either **Trophic.Level** or **Migration**category? That is, in the global test of significance, is the F statistic large enough to reject the null hypothesis of an F value of zero?
 
-    --- F statistics is 78.42 is large enough; with p-value being significantly small -\> showing that we reject the null hypotheses; (that all groups have same mass)
+    --- *F statistics is 78.42 is large enough; with p-value being significantly small -\> showing that we reject the null hypotheses; (that all groups have same mass)*
 
--   so at least one Trophic level group has different mass;
-
-    ```{r}
-    qf(0.95, df1 = 3, df2 = 11000)
-    #p <- 1 - pf(q = 144.5, df1 = 2, df2 = 10983)  # F test
-    #p
-    #???
-    ```
+    *so at least one Trophic level group has different mass;*
 
     ------------------------------------------------------------------------
 
@@ -71,15 +64,7 @@ ggplot(data = d |> drop_na(Migration),aes(x= Migration, y = log(Mass))) +
     F-statistic: 144.5 on 2 and 10983 DF,  p-value: < 2.2e-16
     ```
 
-    ```{r}
-    qf(0.95, df1 = 2, df2 = 10983)
-    f <- (summary(m1)$r.squared * (nrow(d) - (ncol(d) - 1) - 1))/((1 - summary(m1)$r.squared) *(ncol(d) - 1))
-    f
-    1 - pf(q = f, df1 = nrow(d) - (ncol(d) - 1) - 1, df2 = ncol(d) - 1)
-    #but there is different f statistics???
-    ```
-
-    -   the F statistic OF regression model of Migration with log(Mass) large enough to reject the null hypothesis!!!
+    -   *the F statistic OF regression model of Migration with log(Mass) large enough to reject the null hypothesis!!!*
 
 -   Given the regression coefficients returned for your **Migration** model, which **Migration** categor(ies) are different than the reference level? What level is the reference level? Relevel and assess differences among the remaining pair of **Migration** categories.
 
@@ -90,9 +75,9 @@ ggplot(data = d |> drop_na(Migration),aes(x= Migration, y = log(Mass))) +
     summary(m3)
     ```
 
-The reference level is Migration 1 and with mean 3.77; the Migration2 and Migration3 is slightly have bigger mean value to 0.76 and 0.38.
+*The reference level is Migration 1 and with mean 3.77; the Migration2 and Migration3 is slightly have bigger mean value to 0.76 and 0.38.*
 
-After releveling with Migration group 2 as a reference level, the other groups showed lower mean value;
+*After relevelling with Migration group 2 as a reference level, the other groups showed lower mean value;*
 
 ```{r}
 plot(data = d, log(Mass) ~ Migration, col = "red")
@@ -103,15 +88,16 @@ plot(data = d, log(Mass) ~ Migration, col = "red")
 -   Conduct a post-hoc Tukey Honest Significant Differences test to also evaluate which **Migration** categories differ “significantly” from one another.
 
 ```{r}
+m3<-lm(log(Mass) ~ Migration, data = d)
 pairwise.t.test(log(d$Mass), d$Migration, p.adj = "bonferroni")
-#m <- aov(Migration ~ log(Mass), data = d)
+m3 <- aov(log(Mass) ~ Migration, data = d)
 posthoc <- TukeyHSD(m3, which = "Migration", ordered = TRUE, conf.level = 0.95)
 posthoc  
-plot(posthoc, xlim = c(0, 1))  # xlim set to show zero
+plot(posthoc, xlim = c(0, 1)) 
 
 ```
 
-Migration group 1 and 3 differ significantly!
+*Migration group 1 and 3 differ significantly!*
 
 ### **Step 4**
 
@@ -163,10 +149,16 @@ visualize(permuted.F) + shade_p_value(obs_stat = original.F$statistic, direction
 
     ```{r}
     ggplot(data = d ,aes(x= Primary.Lifestyle, y = rel_tarsus_length)) + 
-        geom_boxplot()
+        geom_boxplot() +
+      theme(axis.text.x = element_text(angle = 45, hjust=1))
 
     ggplot(data = d |> drop_na(Trophic.Niche), aes(x = Trophic.Niche, y= rel_beak_length)) + 
-        geom_violin()
+        geom_violin() +
+        theme(axis.text.x = element_text(angle = 45, hjust=1))
+    ggplot(data = d |> drop_na(Trophic.Niche), aes(x = Trophic.Niche, y= rel_beak_length)) + 
+        geom_boxplot() +
+        theme(axis.text.x = element_text(angle = 45, hjust=1))
+
 
     ```
 
@@ -174,4 +166,84 @@ visualize(permuted.F) + shade_p_value(obs_stat = original.F$statistic, direction
 
 -   Run ANOVA analyses to look at the association between geographic range size and the variable **Migration**. You should first drop those observations for which **Migration** is not scored and also look at the distribution of the variable **Range.Size** to decide whether and how it might need to be transformed. Based on the global model, is range size associated with form of migration? How much of the variance in your measure of range size is associated with **Migration** behavior style?
 
+    ```{r}
+    migration<- d |> drop_na(Migration)
+    hist(migration$Range.Size)
+    migration <- migration |> mutate(logRS = log(Range.Size))
+
+    hist(migration$logRS)
+    run_an<-lm(data = migration, logRS ~ Migration) 
+    summary(run_an) 
+
+    ```
+
+    *Yes the range size is associated with the Migration groups as F statistics and p-values are significant to reject null hypotheses.*
+
+    *While on 8.69% of the variance is explained by this regression model.*
+
 -   Given the regression coefficients returned in the output of the model, which **Migration** categor(ies) are different than the reference level? What level is the reference level? Relevel and assess differences among the remaining pair of **Migration** categories. Also conduct a post-hoc Tukey Honest Significant Differences test to also evaluate which **Migration** categories differ “significantly” from one another (see [**Module 20**](https://difiore.github.io/ada-2025/20-module.html)).
+
+    *Since on previous steps I relevelled, now th reference level is Migratoin 2 group. Both other migration categories are different than reference level; Migration 1 is lower than Migration2, and Migration 3 is little bit higher than Migration 2.*
+
+    ```{r}
+
+    migration<- migration|> mutate(Migration = relevel(as.factor(Migration), ref = "3"))
+    run_an2<-lm(data = migration, logRS ~ Migration) 
+    summary(run_an2) 
+
+    m3 <- aov(logRS ~ Migration, data = migration)
+    summary(m3)
+    mighoc <- TukeyHSD(m3, which = "Migration", ordered = TRUE, conf.level = 0.95)
+    mighoc  
+    plot(mighoc, xlim = c(0, 5))
+    ```
+
+*Both migration categories 1,2 have lower mean logRS than Migration3. There is large significant difference between Categories 3 and 1.*
+
+### **Step 4**
+
+-   Winnow your original data to just consider birds from the Infraorder “Passeriformes” (song birds).
+
+-   Run separate one-factor ANOVA analyses to look at the association between \[1\] relative beak length and **Primary.Lifestyle** and between \[2\] relative beak length and **Trophic.Level**. In doing so…
+
+    -   Make boxplots of response variable by each predictor and by the combination of predictors.
+
+        ```{r}
+        passerf <- d |> filter(Order1 == "Passeriformes")
+
+        ggplot(passerf, aes(x = Primary.Lifestyle, y = rel_beak_length, fill = Primary.Lifestyle)) +
+          geom_boxplot() +
+          labs(title = "Boxplot of Relative Beak Length by Primary Lifestyle")
+
+        ggplot(passerf, aes(x = Trophic.Level, y = rel_beak_length, fill = Trophic.Level)) +
+          geom_boxplot() +
+          labs(title = "Boxplot of Relative Beak Length by Trophic Level")
+
+        ggplot(passerf, aes(x = interaction(Primary.Lifestyle, Trophic.Level), y = rel_beak_length)) +
+          geom_boxplot() +
+          labs(title = "Boxplot of Relative Beak Length by Lifestyle and Trophic Level") +
+          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        ```
+
+    -   Run linear models for each predictor separately and interpret the model output.
+
+    ```{r}
+    pm1<-lm(data = passerf, rel_beak_length ~ Primary.Lifestyle)
+    pm2<-lm(data = passerf, rel_beak_length ~ Trophic.Level)
+    summary(pm1)
+    summary(pm2)
+    ```
+
+```{r}
+two_anove<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
+summary(two_anove)
+two_anove<-aov(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
+
+m8<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)
+summary(m8)
+m8<-aov(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)
+m9<-aov(rel_beak_length ~ Primary.Lifestyle*Trophic.Level, data = passerf)
+### m8 and m9 same 
+
+## 
+```
