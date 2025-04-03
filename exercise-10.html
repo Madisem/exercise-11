@@ -651,7 +651,7 @@ $Migration
 </div>
 </div>
 </div>
-<p><em>Migration group 1 and 3 differ significantly!</em></p>
+<p><em>Migration group 1 and 2 differ significantly!</em></p>
 </section>
 <section id="step-4" class="level3">
 <h3 class="anchored" data-anchor-id="step-4"><strong>Step 4</strong></h3>
@@ -989,87 +989,125 @@ F-statistic:   174 on 2 and 6611 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div></li>
 </ul>
+<p><em>The Aerial group’s relative beak length is lowest in comparison to other groups in Lifestyle. Incessorial’s have highest average relative beak length;</em></p>
+<p><em>Herbivore’s relative beak length is smallest in comparison to other categories in Trophic.Level. Omnivore group has highest beak length;</em></p>
+<p><em>F statistics and P-value showing both Predictors’s categories have different average beak length; even though only 5$ person of variation explain the model.</em></p>
+</section>
+<section id="step-5" class="level3">
+<h3 class="anchored" data-anchor-id="step-5"><strong>Step 5</strong></h3>
+<ul>
+<li><p>Run a two-factor model to look at the association between relative beak length and both&nbsp;<strong>Primary.Lifestyle</strong>&nbsp;and&nbsp;<strong>Trophic.Level</strong>&nbsp;among the passeriforms. Based on the model output, what would you conclude about how relative beak length is related to these two variables?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>two_anove<span class="ot">&lt;-</span><span class="fu">lm</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level, <span class="at">data =</span> passerf)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(two_anove)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#two_anova&lt;-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(two_anova)</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>two_anova<span class="ot">&lt;-</span><span class="fu">aov</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level, <span class="at">data =</span> passerf)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(two_anova)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = rel_beak_length ~ Primary.Lifestyle + Trophic.Level, 
-    data = passerf)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.65365 -0.13329 -0.02284  0.10274  1.20180 
-
-Coefficients:
-                              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)                  -0.349502   0.020958 -16.677   &lt;2e-16 ***
-Primary.LifestyleGeneralist   0.301517   0.022582  13.352   &lt;2e-16 ***
-Primary.LifestyleInsessorial  0.375698   0.021295  17.642   &lt;2e-16 ***
-Primary.LifestyleTerrestrial  0.302119   0.021942  13.769   &lt;2e-16 ***
-Trophic.LevelHerbivore       -0.126397   0.006761 -18.695   &lt;2e-16 ***
-Trophic.LevelOmnivore         0.012140   0.006450   1.882   0.0599 .  
+<pre><code>                    Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Primary.Lifestyle    3  18.20   6.067   138.1 &lt;2e-16 ***
+Trophic.Level        2  17.68   8.838   201.2 &lt;2e-16 ***
+Residuals         6608 290.24   0.044                   
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.2096 on 6608 degrees of freedom
-Multiple R-squared:   0.11, Adjusted R-squared:  0.1093 
-F-statistic: 163.4 on 5 and 6608 DF,  p-value: &lt; 2.2e-16</code></pre>
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>two_anove<span class="ot">&lt;-</span><span class="fu">aov</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level, <span class="at">data =</span> passerf)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>m8<span class="ot">&lt;-</span><span class="fu">lm</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level <span class="sc">+</span> Primary.Lifestyle<span class="sc">:</span>Trophic.Level, <span class="at">data =</span> passerf)</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>The <strong>F-statistics</strong> (138.1 and 201.2) are very high, and <strong>p-values less than 0.01</strong>, meaning both predictors significantly contribute to explaining variance in relative beak length.</em></p>
+<p><em>So, <strong>18.2% of the total variance in relative beak length is explained by Primary.Lifestyle and 17.7% Trophic.Level</strong>. The remaining <strong>is unexplained</strong>.</em></p></li>
+</ul>
+</section>
+<section id="step-6" class="level3">
+<h3 class="anchored" data-anchor-id="step-6"><strong>Step 6</strong></h3>
+<ul>
+<li>Finally, run an additional two-way model with the same dataset and predictors, but adding the possibility of an interaction term. To do this, you should modify your model formula using the colon operator (<code>:</code>) to specify the interaction, e.g., relative beak length ~&nbsp;<strong>Primary.Lifestyle</strong>&nbsp;+&nbsp;<strong>Trophic.Level</strong>&nbsp;+&nbsp;<strong>Primary.Lifestyle:Trophic.Level</strong>. Based on the model output, what would you now conclude about how relative beak length is related to these two variables?</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#m8&lt;-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(m8)</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>m8<span class="ot">&lt;-</span><span class="fu">aov</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level <span class="sc">+</span> Primary.Lifestyle<span class="sc">:</span>Trophic.Level, <span class="at">data =</span> passerf)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#m9&lt;-aov(rel_beak_length ~ Primary.Lifestyle*Trophic.Level, data = passerf)</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="do">### m8 and m9 same </span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = rel_beak_length ~ Primary.Lifestyle + Trophic.Level + 
-    Primary.Lifestyle:Trophic.Level, data = passerf)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.64623 -0.12836 -0.02078  0.10070  1.21924 
-
-Coefficients: (2 not defined because of singularities)
-                                                    Estimate Std. Error t value
-(Intercept)                                         -0.34950    0.02066 -16.918
-Primary.LifestyleGeneralist                          0.33010    0.02367  13.948
-Primary.LifestyleInsessorial                         0.35826    0.02104  17.031
-Primary.LifestyleTerrestrial                         0.35714    0.02210  16.162
-Trophic.LevelHerbivore                              -0.27502    0.01562 -17.608
-Trophic.LevelOmnivore                               -0.11080    0.01550  -7.150
-Primary.LifestyleGeneralist:Trophic.LevelHerbivore   0.05033    0.02584   1.948
-Primary.LifestyleInsessorial:Trophic.LevelHerbivore  0.20115    0.01750  11.494
-Primary.LifestyleTerrestrial:Trophic.LevelHerbivore       NA         NA      NA
-Primary.LifestyleGeneralist:Trophic.LevelOmnivore    0.09898    0.02351   4.210
-Primary.LifestyleInsessorial:Trophic.LevelOmnivore   0.15527    0.01726   8.996
-Primary.LifestyleTerrestrial:Trophic.LevelOmnivore        NA         NA      NA
-                                                    Pr(&gt;|t|)    
-(Intercept)                                          &lt; 2e-16 ***
-Primary.LifestyleGeneralist                          &lt; 2e-16 ***
-Primary.LifestyleInsessorial                         &lt; 2e-16 ***
-Primary.LifestyleTerrestrial                         &lt; 2e-16 ***
-Trophic.LevelHerbivore                               &lt; 2e-16 ***
-Trophic.LevelOmnivore                               9.61e-13 ***
-Primary.LifestyleGeneralist:Trophic.LevelHerbivore    0.0515 .  
-Primary.LifestyleInsessorial:Trophic.LevelHerbivore  &lt; 2e-16 ***
-Primary.LifestyleTerrestrial:Trophic.LevelHerbivore       NA    
-Primary.LifestyleGeneralist:Trophic.LevelOmnivore   2.59e-05 ***
-Primary.LifestyleInsessorial:Trophic.LevelOmnivore   &lt; 2e-16 ***
-Primary.LifestyleTerrestrial:Trophic.LevelOmnivore        NA    
+<pre><code>                                  Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Primary.Lifestyle                  3  18.20   6.067  142.15 &lt;2e-16 ***
+Trophic.Level                      2  17.68   8.838  207.11 &lt;2e-16 ***
+Primary.Lifestyle:Trophic.Level    4   8.41   2.102   49.26 &lt;2e-16 ***
+Residuals                       6604 281.83   0.043                   
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.2066 on 6604 degrees of freedom
-Multiple R-squared:  0.1358,    Adjusted R-squared:  0.1346 
-F-statistic: 115.3 on 9 and 6604 DF,  p-value: &lt; 2.2e-16</code></pre>
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>m8<span class="ot">&lt;-</span><span class="fu">aov</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle <span class="sc">+</span> Trophic.Level <span class="sc">+</span> Primary.Lifestyle<span class="sc">:</span>Trophic.Level, <span class="at">data =</span> passerf)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>m9<span class="ot">&lt;-</span><span class="fu">aov</span>(rel_beak_length <span class="sc">~</span> Primary.Lifestyle<span class="sc">*</span>Trophic.Level, <span class="at">data =</span> passerf)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="do">### m8 and m9 same </span></span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>The Sum Sq (8.41) shows how much beak length variation comes from the interaction between Primary.Lifestyle and Trophic.Level. The high F-value (49.26) and very small p-value mean this interaction is significant, so the effect of Primary.Lifestyle on beak length changes depending on Trophic.Level or vice versa.</em></p>
+</section>
+<section id="step-7" class="level3">
+<h3 class="anchored" data-anchor-id="step-7"><strong>Step 7</strong></h3>
+<ul>
+<li><p>Use the&nbsp;<code>interaction.plot()</code>&nbsp;function to visualize the interaction between&nbsp;<strong>Primary.Lifestyle</strong>&nbsp;and&nbsp;<strong>Trophic.Level</strong>&nbsp;(see&nbsp;<a href="https://difiore.github.io/ada-2025/20-module.html"><strong>Module 20</strong></a>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x.factor =</span> passerf<span class="sc">$</span>Primary.Lifestyle,   </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace.factor =</span> passerf<span class="sc">$</span>Trophic.Level,   </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">response =</span> passerf<span class="sc">$</span>rel_beak_length,    </span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun =</span> base<span class="sc">::</span>mean,                             </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Primary Lifestyle"</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Mean Relative Beak Length"</span>,</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace.label =</span> <span class="st">"Trophic Level"</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise-10_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="step-8" class="level3">
+<h3 class="anchored" data-anchor-id="step-8"><strong>Step 8</strong></h3>
+<p>In the exercise above, we really did not do any checking with this dataset to see if the data meet the primary assumptions for standard linear regression and ANOVA, which are that variables/residuals within each grouping level are roughly normally distributed and have roughly equal variances. Sample sizes within each grouping level should also be roughly equal. As noted in&nbsp;<a href="https://difiore.github.io/ada-2025/20-module.html"><strong>Module 20</strong></a>, a general rule of thumb for “equal” variances is to compare the largest and smallest within-grouping level standard deviations and, if this value is less than 2, then it is often reasonable to presume the assumption may not be violated.</p>
+<p>Use this approach to see whether variances in across groups in your various models (e.g., for&nbsp;<strong>relative beak length ~ trophic level</strong>) are roughly equal. Additionally, do a visual check of whether observations and model residuals within groups look to be normally distributed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Trophic.Level) <span class="sc">|&gt;</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="st">`</span><span class="at">mean(rel_beak_length)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(rel_beak_length), <span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sd</span>(rel_beak_length))</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(stats<span class="sc">$</span><span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span>)<span class="sc">/</span><span class="fu">min</span>(stats<span class="sc">$</span><span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.833621</code></pre>
+</div>
+</div>
+<p><em>The ratio between maximum and minumim standard deviation is big around 4.8, saying that variances are not homogenous? Then I should not have run standard ANOVA test, or I should do transform data?</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> passerf <span class="sc">|&gt;</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Trophic.Level) <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="st">`</span><span class="at">mean(rel_beak_length)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(rel_beak_length), <span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sd</span>(rel_beak_length))</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(stats<span class="sc">$</span><span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span>)<span class="sc">/</span><span class="fu">min</span>(stats<span class="sc">$</span><span class="st">`</span><span class="at">sd(rel_beak_length)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.336194</code></pre>
+</div>
+</div>
+<p><em>while is Passeriform data - The ratio between maximum and minumim standard deviation is less than 2, saying that different groups roughly have equal variances.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">na.omit</span>(passerf<span class="sc">$</span>rel_beak_length[passerf<span class="sc">$</span>Trophic.Level <span class="sc">==</span> <span class="st">"Carnivore"</span>]), <span class="at">main =</span> <span class="st">"Carnivore"</span>, <span class="at">xlab =</span> <span class="st">"Relative beak Length"</span>)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">na.omit</span>(passerf<span class="sc">$</span>rel_beak_length[passerf<span class="sc">$</span>Trophic.Level <span class="sc">==</span> <span class="st">"Carnivore"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exercise-10_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#par(mfrow = c(1, 2))</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co">#hist(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Herbivore"]), main = "Herbivore", xlab = "Relative beak Length")</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co">#qqnorm(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Hervibore"]))</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co">#par(mfrow = c(1, 2))</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co">#hist(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Omnivore"]), main = "Omnivore", xlab = "Relative beak Length")</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co">#qqnorm(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Omnivore"]))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>

@@ -97,7 +97,7 @@ plot(posthoc, xlim = c(0, 1))
 
 ```
 
-*Migration group 1 and 3 differ significantly!*
+*Migration group 1 and 2 differ significantly!*
 
 ### **Step 4**
 
@@ -234,16 +234,96 @@ visualize(permuted.F) + shade_p_value(obs_stat = original.F$statistic, direction
     summary(pm2)
     ```
 
-```{r}
-two_anove<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
-summary(two_anove)
-two_anove<-aov(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
+*The Aerial group's relative beak length is lowest in comparison to other groups in Lifestyle. Incessorial's have highest average relative beak length;*
 
-m8<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)
-summary(m8)
+*Herbivore's relative beak length is smallest in comparison to other categories in Trophic.Level. Omnivore group has highest beak length;*
+
+*F statistics and P-value showing both Predictors's categories have different average beak length; even though only 5\$ person of variation explain the model.*
+
+### **Step 5**
+
+-   Run a two-factor model to look at the association between relative beak length and both **Primary.Lifestyle** and **Trophic.Level** among the passeriforms. Based on the model output, what would you conclude about how relative beak length is related to these two variables?
+
+    ```{r}
+    #two_anova<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
+    #summary(two_anova)
+    two_anova<-aov(rel_beak_length ~ Primary.Lifestyle + Trophic.Level, data = passerf)
+    summary(two_anova)
+    ```
+
+    *The **F-statistics** (138.1 and 201.2) are very high, and **p-values less than 0.01**, meaning both predictors significantly contribute to explaining variance in relative beak length.*
+
+    *So, **18.2% of the total variance in relative beak length is explained by Primary.Lifestyle and 17.7% Trophic.Level**. The remaining **is unexplained**.*
+
+### **Step 6**
+
+-   Finally, run an additional two-way model with the same dataset and predictors, but adding the possibility of an interaction term. To do this, you should modify your model formula using the colon operator (`:`) to specify the interaction, e.g., relative beak length \~ **Primary.Lifestyle** + **Trophic.Level** + **Primary.Lifestyle:Trophic.Level**. Based on the model output, what would you now conclude about how relative beak length is related to these two variables?
+
+```{r}
+#m8<-lm(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)
+#summary(m8)
 m8<-aov(rel_beak_length ~ Primary.Lifestyle + Trophic.Level + Primary.Lifestyle:Trophic.Level, data = passerf)
-m9<-aov(rel_beak_length ~ Primary.Lifestyle*Trophic.Level, data = passerf)
+#m9<-aov(rel_beak_length ~ Primary.Lifestyle*Trophic.Level, data = passerf)
 ### m8 and m9 same 
+summary(m8)
 
 ## 
+```
+
+*The Sum Sq (8.41) shows how much beak length variation comes from the interaction between Primary.Lifestyle and Trophic.Level. The high F-value (49.26) and very small p-value mean this interaction is significant, so the effect of Primary.Lifestyle on beak length changes depending on Trophic.Level or vice versa.*
+
+### **Step 7**
+
+-   Use the `interaction.plot()` function to visualize the interaction between **Primary.Lifestyle** and **Trophic.Level** (see [**Module 20**](https://difiore.github.io/ada-2025/20-module.html)).
+
+    ```{r}
+    interaction.plot(
+      x.factor = passerf$Primary.Lifestyle,   
+      trace.factor = passerf$Trophic.Level,   
+      response = passerf$rel_beak_length,    
+      fun = base::mean,                             
+      xlab = "Primary Lifestyle",
+      ylab = "Mean Relative Beak Length",
+      trace.label = "Trophic Level"
+    )
+    ```
+
+### **Step 8**
+
+In the exercise above, we really did not do any checking with this dataset to see if the data meet the primary assumptions for standard linear regression and ANOVA, which are that variables/residuals within each grouping level are roughly normally distributed and have roughly equal variances. Sample sizes within each grouping level should also be roughly equal. As noted in [**Module 20**](https://difiore.github.io/ada-2025/20-module.html), a general rule of thumb for “equal” variances is to compare the largest and smallest within-grouping level standard deviations and, if this value is less than 2, then it is often reasonable to presume the assumption may not be violated.
+
+Use this approach to see whether variances in across groups in your various models (e.g., for **relative beak length \~ trophic level**) are roughly equal. Additionally, do a visual check of whether observations and model residuals within groups look to be normally distributed.
+
+```{r}
+stats <- d |>
+    group_by(Trophic.Level) |>
+    summarize(`mean(rel_beak_length)` = mean(rel_beak_length), `sd(rel_beak_length)` = sd(rel_beak_length))
+
+max(stats$`sd(rel_beak_length)`)/min(stats$`sd(rel_beak_length)`)
+```
+
+*The ratio between maximum and minumim standard deviation is big around 4.8, saying that variances are not homogenous? Then I should not have run standard ANOVA test, or I should do transform data?*
+
+```{r}
+stats <- passerf |>
+    group_by(Trophic.Level) |>
+    summarize(`mean(rel_beak_length)` = mean(rel_beak_length), `sd(rel_beak_length)` = sd(rel_beak_length))
+
+max(stats$`sd(rel_beak_length)`)/min(stats$`sd(rel_beak_length)`)
+```
+
+*while is Passeriform data - The ratio between maximum and minumim standard deviation is less than 2, saying that different groups roughly have equal variances.*
+
+```{r}
+par(mfrow = c(1, 2))
+hist(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Carnivore"]), main = "Carnivore", xlab = "Relative beak Length")
+qqnorm(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Carnivore"]))
+
+#par(mfrow = c(1, 2))
+#hist(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Herbivore"]), main = "Herbivore", xlab = "Relative beak Length")
+#qqnorm(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Hervibore"]))
+
+#par(mfrow = c(1, 2))
+#hist(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Omnivore"]), main = "Omnivore", xlab = "Relative beak Length")
+#qqnorm(na.omit(passerf$rel_beak_length[passerf$Trophic.Level == "Omnivore"]))
 ```
