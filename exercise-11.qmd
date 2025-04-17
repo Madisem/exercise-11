@@ -131,3 +131,18 @@ ggplot(d_wn, aes( x = relWeaningMass, y = reorder(order, relWeaningMass, FUN = m
 -   What variables, if any, appear in all of this set of “top” models?
 
 -   Calculate and plot the model-averaged coefficients and their CIs across this set of top models.
+
+```{r}
+d_new<- d |> drop_na(`max. life(mo)`, `gestation(mo)`,`newborn(g)`,`weaning(mo)`,`wean mass(g)`,`litters/year`,`mass(g)`)
+m_null <- lm(data = d_new, `max. life(mo)` ~ 1)
+add1(m_null, scope = .~. + `gestation(mo)`+`newborn(g)`+`weaning(mo)`+`wean mass(g)`+`litters/year`+`mass(g)`, test = "F")
+
+#install.packages("https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz", repos = NULL, type = "source")
+#install.packages("MuMIn")
+library(MuMIn)
+
+  
+m_full <- lm(data=d_new, `max. life(mo)` ~ `gestation(mo)`+`newborn(g)`+`weaning(mo)`+`wean mass(g)`+`litters/year`+`mass(g)`, na.action = na.fail)
+(mods<- dredge(m_full))
+summary(mods)
+```
