@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-##  **Preliminaries**
+## **Preliminaries**
 
 -   Using the {tidyverse} `read_tsv()` function, load the “Mammal_lifehistories_v2.txt” dataset from [this URL](https://raw.githubusercontent.com/difiore/ada-datasets/main/Mammal_lifehistories_v2.txt) as a “tibble” named **d**. As discussed in class, this is dataset that compiles life history and other variables for over 1400 species of placental mammals from 17 different Orders.
 
@@ -20,7 +20,7 @@ head(d)
 skim(d)
 ```
 
--   *Order, family, Genus, species are character; the rest 10 columns in numeric variables;*
+-   ***Order, family, Genus, species are character; the rest 10 columns in numeric variables;***
 
 #### **Step 1**
 
@@ -31,7 +31,7 @@ d[d == -999] <- NA
 skim(d)
 ```
 
-*now p0,p25 do not have -999 values;*
+***now p0,p25 do not have -999 values;***
 
 #### **Step 2**
 
@@ -52,7 +52,7 @@ d<-d |> mutate(across(where(is.numeric), log))
 skim(d)
 ```
 
-*Now, in histogram the distribution of the values are different compared to non-log values;*
+***Now, in histogram the distribution of the values are different compared to non-log values;***
 
 #### **Step 4**
 
@@ -96,7 +96,7 @@ d_drop |> group_by(order) |>
   arrange(desc(mean_relLife))
 ```
 
-*Primates has the highest residual lifespan!*
+***Primates has the highest residual lifespan!***
 
 ```{r}
 d_nb <- drop_na(d, relNewbornMass, order)
@@ -107,7 +107,7 @@ ggplot(d_nb, aes( x = relNewbornMass, y = reorder(order, relNewbornMass, FUN = m
   theme_minimal()
 ```
 
-*Macroscelidea, cetacea orders have the highest residual newborn mass!*
+***Macroscelidea, cetacea orders have the highest residual newborn mass!***
 
 ```{r}
 d_wn <- drop_na(d, relWeaningMass, order)
@@ -118,7 +118,7 @@ ggplot(d_wn, aes( x = relWeaningMass, y = reorder(order, relWeaningMass, FUN = m
   theme_minimal()
 ```
 
-*Perissodactyla order has the highest residual weaning mass!*
+***Perissodactyla order has the highest residual weaning mass!***
 
 #### **Step 6**
 
@@ -136,13 +136,64 @@ ggplot(d_wn, aes( x = relWeaningMass, y = reorder(order, relWeaningMass, FUN = m
 d_new<- d |> drop_na(`max. life(mo)`, `gestation(mo)`,`newborn(g)`,`weaning(mo)`,`wean mass(g)`,`litters/year`,`mass(g)`)
 m_null <- lm(data = d_new, `max. life(mo)` ~ 1)
 add1(m_null, scope = .~. + `gestation(mo)`+`newborn(g)`+`weaning(mo)`+`wean mass(g)`+`litters/year`+`mass(g)`, test = "F")
+ 
 
 #install.packages("https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz", repos = NULL, type = "source")
 #install.packages("MuMIn")
 library(MuMIn)
 
-  
 m_full <- lm(data=d_new, `max. life(mo)` ~ `gestation(mo)`+`newborn(g)`+`weaning(mo)`+`wean mass(g)`+`litters/year`+`mass(g)`, na.action = na.fail)
 (mods<- dredge(m_full))
-summary(mods)
+
+subset(mods, delta <= 4)
+sw(subset(mods, delta <= 4))
+(mods.avg <- summary(model.avg(mods, subset = delta < 4, fit = TRUE)))
+
+confint(mods.avg)
+
+(mods.avg <- summary(model.avg(mods, subset = cumsum(weight) <= 0.95, fit = TRUE)))
+
+plot(mods.avg, full = TRUE, intercept = FALSE)
+plot(mods.avg, full = FALSE, intercept = FALSE)
+
+```
+
+***for max. life(mo) model - 5 MODELS have lowest AICs wiyh delta less than 4;***
+
+***Those variables(predictors) appear in all these top models (AIC delta \<4):***
+
+***`gestation(mo), weaning(mo), litters/year`***
+
+```{r}
+d_new2<- d |> drop_na(`AFR(mo)`, `gestation(mo)`,`newborn(g)`,`weaning(mo)`,`wean mass(g)`,`litters/year`,`mass(g)`)
+ 
+#install.packages("https://cran.r-project.org/src/contrib/Archive/MuMIn/MuMIn_1.46.0.tar.gz", repos = NULL, type = "source")
+#install.packages("MuMIn")
+library(MuMIn)
+
+m_full2 <- lm(data=d_new2, `AFR(mo)` ~ `gestation(mo)`+`newborn(g)`+`weaning(mo)`+`wean mass(g)`+`litters/year`+`mass(g)`, na.action = na.fail)
+(mods2<- dredge(m_full2))
+summary(mods2)
+```
+
+***for max. life(mo) model - 7 MODELS have lowest AIC with delta less than 4;***
+
+***Those variables(predictors) appear in all these top models (AIC delta \<4):***
+
+***`gestation(mo), litters/year, weaning(mo)`***
+
+```{r}
+tops<-subset(mods2, delta <= 4)
+
+sw(tops)
+
+(mods2.avg <- summary(model.avg(mods2, subset = delta < 4, fit = TRUE)))
+
+confint(mods2.avg)
+
+(mods2.avg <- summary(model.avg(mods2, subset = cumsum(weight) <= 0.95, fit = TRUE)))
+
+plot(mods2.avg, full = TRUE, intercept = FALSE)
+plot(mods2.avg, full = FALSE, intercept = FALSE)
+
 ```
